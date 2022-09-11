@@ -9,7 +9,7 @@
       <!--列,key id,数据ebook,分页,等待框,分页执行方法-->
       <a-table
           :columns="columns"
-          :row-key="record=>record.name"
+          :row-key="record=>record.id"
           :data-source="ebooks"
           :pagination="pagination"
           :loading="loading"
@@ -23,9 +23,16 @@
             <a-button type="primary" @click="edit(record)">
               编辑
             </a-button>
-            <a-button type="primary">
-              删除
-            </a-button>
+            <a-popconfirm
+                title="删了就真的没有啦,您是不是点歪了"
+                ok-text="真删不跟你闹"
+                cancel-text="哎哟点错了"
+                @confirm="handleDelete(record.id)"
+            >
+              <a-button type="primary">
+                删除
+              </a-button>
+            </a-popconfirm>
           </a-space>
         </template>
       </a-table>
@@ -36,6 +43,7 @@
       title="Title"
       v-model:visible="modalVisible"
       :confirm-loading="modalLoading"
+      ok-text="我测,说藏话了"
       @ok="handleModalOk"
   >
     <!--弹出表单-->
@@ -75,7 +83,7 @@ export default defineComponent({
     const ebooks = ref();//响应式数据 获取的书籍实时反馈到页面上
     const pagination = ref({
       current: 1,//当前页
-      pageSize: 2,//分页条数
+      pageSize: 4,//分页条数
       total: 0
     });
 
@@ -174,6 +182,26 @@ export default defineComponent({
       modalVisible .value = true;
       ebook.value={};
     };
+
+
+    /**
+     * 删除
+     */
+    const handleDelete = ( id:number ) =>{
+
+      axios.delete("/ebook/delete/"+id).then((response)=>{
+        const data = response.data;  //commonResp
+        if(data.success){
+          //重新加载列表
+          handleQuery({
+            page:pagination.value.current,  //查询当前所在的页
+            size:pagination.value.pageSize
+          });
+        }
+      })
+    };
+
+
     onMounted(() => {
       handleQuery({
         page:1,
@@ -192,6 +220,7 @@ export default defineComponent({
 
       edit,
       add,
+      handleDelete,
 
       ebook,
       modalVisible,
