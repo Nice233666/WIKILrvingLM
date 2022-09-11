@@ -1,9 +1,9 @@
 <template>
 
   <a-layout>
-    <the-header></the-header>
+    <the-header v-show="$route.meta.flag"></the-header>
     <router-view/>
-    <the-footer></the-footer>
+    <the-footer v-show="$route.meta.flag"></the-footer>
   </a-layout>
 </template>
 <script lang="ts">
