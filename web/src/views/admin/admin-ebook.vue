@@ -4,8 +4,22 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '80px'  }"
     >
       <p>
-        <a-button type="primary" @click="add()" size="large">添加</a-button>
+        <a-form
+            layout="inline"
+            :model="param"
+        >
+          <a-form-item>
+            <a-input v-model:value="param.name" placeholder="想想你该查什么" />
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="handleQuery({ page:1,size:pagination.pageSize})" >查询</a-button>
+          </a-form-item>
+          <a-form-item>
+            <a-button type="primary" @click="add()">添加</a-button>
+          </a-form-item>
+        </a-form>
       </p>
+
       <!--列,key id,数据ebook,分页,等待框,分页执行方法-->
       <a-table
           :columns="columns"
@@ -127,6 +141,7 @@ export default defineComponent({
         params:{
           page:params.page,
           size:params.size,
+          name:param.value.name,//是否有value,没有就不传
         }
       }).then((response) => {
         loading.value = false;
@@ -227,7 +242,9 @@ export default defineComponent({
       edit,
       add,
       handleDelete,
+      handleQuery,
 
+      param,
       ebook,
       modalVisible,
       modalLoading,

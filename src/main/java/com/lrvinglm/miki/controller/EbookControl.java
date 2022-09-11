@@ -18,6 +18,11 @@ public class EbookControl {
     @Resource
     private EbookService ebookService;
 
+    /**
+     * 查询所有电子书
+     * @param req
+     * @return
+     */
     @RequestMapping("/list")  //接口支持所有的请求方式
     public CommonResp list(@Valid EbookQueryReq req){
         CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
@@ -26,6 +31,11 @@ public class EbookControl {
         return resp;
     }
 
+    /**
+     * 保存电子书
+     * @param req
+     * @return
+     */
     @PostMapping("/save")
     public CommonResp save(@Valid @RequestBody EbookSaveReq req){
         CommonResp resp = new CommonResp();
@@ -33,6 +43,11 @@ public class EbookControl {
         return resp;
     }
 
+    /**
+     * id删除电子书
+     * @param id
+     * @return
+     */
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable long id){
         CommonResp resp = new CommonResp();
