@@ -104,12 +104,11 @@ export default defineComponent({
       },
       {
         title: '父分类',
-        key:'parent',
-        dateIndex:'parent',
+        dataIndex: 'parent',
       },
       {
         title: '排序',
-        dataIndex: 'sort'
+        dataIndex: 'sort',
       },
       {
         title: 'Action',
