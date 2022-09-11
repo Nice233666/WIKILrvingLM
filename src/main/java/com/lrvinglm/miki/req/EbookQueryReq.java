@@ -1,11 +1,11 @@
 package com.lrvinglm.miki.req;
 
+import javax.validation.constraints.NotNull;
+
 public class EbookQueryReq extends PageReq{
     private Long id;
 
     private String name;
-
-
 
     private String description;
 

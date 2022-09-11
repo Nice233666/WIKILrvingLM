@@ -159,15 +159,18 @@ export default defineComponent({
     const handleModalOk = () => {
       modalLoading.value = true;
       axios.post("/ebook/save",ebook.value).then((response) => {
+        modalLoading.value = false;
         const data = response.data;  //commonResp
         if(data.success){
           modalVisible.value = false;
-          modalLoading.value = false;
+
           //重新加载列表
           handleQuery({
             page:pagination.value.current,  //查询当前所在的页
             size:pagination.value.pageSize
           });
+        }else{
+          message.error(data.message);
         }
       });
     };
