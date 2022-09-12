@@ -31,6 +31,18 @@ public class CategoryService {
     private SnowFlake snowFlake;
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
+    public List<CategoryQueryResp> all(){
+
+
+
+        //domain下的example mybaits自动生成了很多方法
+        CategoryExample categoryExample = new CategoryExample();
+        categoryExample.setOrderByClause("sort asc");
+        List<Category> categoryList = categoryMapper.selectByExample(categoryExample);//查询到所有的Category实体
+        List<CategoryQueryResp> respList = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
+
+        return respList;
+    }
     public PageResp<CategoryQueryResp> list(CategoryQueryReq req){
 
 
@@ -39,7 +51,7 @@ public class CategoryService {
         CategoryExample categoryExample = new CategoryExample();
         //当作where语句
         CategoryExample.Criteria criteria = categoryExample.createCriteria();
-
+        categoryExample.setOrderByClause("sort asc");
         PageHelper.startPage(req.getPage(),req.getSize());//只会分页最近的需要查询的sql，当页面多条sql时 把分页和sql放一起
         List<Category> categoryList = categoryMapper.selectByExample(categoryExample);//查询到所有的Category实体
 
