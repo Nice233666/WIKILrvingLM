@@ -32,6 +32,9 @@
         <template #cover="{text:cover}">
           <img class="img-wh" v-if="cover" :src="cover" alt="avatar"/> <!--渲染图片-->
         </template>
+        <template v-slot:category="{text,record}">
+          <span>{{getCategoryName(record.category1Id)}}/{{getCategoryName(record.category2Id)}}</span>
+        </template>
         <template v-slot:action="{ text, record }">
           <a-space size="small">
             <a-button type="primary" @click="edit(record)">
@@ -123,12 +126,8 @@ export default defineComponent({
         dataIndex: 'name',
       },
       {
-        title: '分类一',
-        dataIndex:'category1Id',
-      },
-      {
-        title: '分类二',
-        dataIndex:'category2Id',
+        title: '分类',
+        slots: {customRender: 'category'},
       },
       {
         title: '阅读数',
@@ -144,6 +143,7 @@ export default defineComponent({
         slots: {customRender: 'action'}
       }
     ];
+
     /**
      * 数据查询
      **/
@@ -225,6 +225,7 @@ export default defineComponent({
 
 
     const level1=ref();
+    let categorys: any;
     /**
      * 数据查询
      **/
@@ -234,7 +235,7 @@ export default defineComponent({
         loading.value = false;
         const data = response.data;
         if (data.success){
-          const categorys = data.content;
+          categorys = data.content;
           console.log("原始数组:",categorys);
           level1.value=[];
           level1.value=Tool.array2Tree(categorys,0);
@@ -244,10 +245,24 @@ export default defineComponent({
         }
       });
     };
+
+    /**
+     * 查询名字
+     */
+    const getCategoryName=(cid : number)=>{
+      let result="";
+      categorys.forEach((item:any)=>{
+        if(item.id===cid){
+          result=item.name;
+        }
+      });
+      return result;
+    };
+
     /**
      * 删除
      */
-    const handleDelete = ( id:number ) =>{
+    const handleDelete = ( id : number ) =>{
 
       axios.delete("/ebook/delete/"+id).then((response)=>{
         const data = response.data;  //commonResp
@@ -292,6 +307,7 @@ export default defineComponent({
       handleModalOk,
       level1,
       categoryIds,
+      getCategoryName,
 
 
     }
