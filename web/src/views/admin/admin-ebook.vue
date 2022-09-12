@@ -68,11 +68,16 @@
       <a-form-item label="名称">
         <a-input v-model:value="ebook.name"/>
       </a-form-item>
-      <a-form-item label="分类一">
-        <a-input v-model:value="ebook.category"/>
+      <a-form-item label="分类">
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{label: 'name', value: 'id', children: 'children'}"
+            :options="level1"
+        />
       </a-form-item>
       <a-form-item label="阅读数">
         <a-input v-model:value="ebook.viewCount"/>
+
       </a-form-item>
       <a-form-item label="点赞数">
         <a-input v-model:value="ebook.voteCount"/>
@@ -95,6 +100,7 @@ import {Tool} from "@/utils/tool";
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
+
     const param = ref();
     param.value = {};
     const ebooks = ref();//响应式数据 获取的书籍实时反馈到页面上
@@ -117,8 +123,12 @@ export default defineComponent({
         dataIndex: 'name',
       },
       {
-        title: '分类',
-        slots: {customRender: 'category'}
+        title: '分类一',
+        dataIndex:'category1Id',
+      },
+      {
+        title: '分类二',
+        dataIndex:'category2Id',
       },
       {
         title: '阅读数',
@@ -169,12 +179,18 @@ export default defineComponent({
       });
     };
 
-    /**表单*/
-    const ebook=ref({});
+    /**表单***/
+    /**
+     * 数组[100,101]对应: 前端开发/ Vue
+     */
+    const categoryIds=ref();
+    const ebook=ref();
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
+      ebook.value.category1Id=categoryIds.value[0];
+      ebook.value.category2Id=categoryIds.value[1];
       axios.post("/ebook/save",ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data;  //commonResp
@@ -197,6 +213,7 @@ export default defineComponent({
     const edit = ( record:any ) =>{
       modalVisible .value = true;
       ebook.value = Tool.copy(record);  //通过JSON对象转换来生成新的对象，从而不会直接更改到原来所显示的对象
+      categoryIds.value=[ebook.value.category1id,ebook.value.category2id]
     };
     /**
      * 添加
@@ -207,6 +224,26 @@ export default defineComponent({
     };
 
 
+    const level1=ref();
+    /**
+     * 数据查询
+     **/
+    const handleQueryCategory = () => {
+      loading.value = true;
+      axios.get("/category/all", ).then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success){
+          const categorys = data.content;
+          console.log("原始数组:",categorys);
+          level1.value=[];
+          level1.value=Tool.array2Tree(categorys,0);
+          console.log("树形数组:",level1.value)
+        }else{
+          message.error(data.message);
+        }
+      });
+    };
     /**
      * 删除
      */
@@ -226,6 +263,7 @@ export default defineComponent({
 
 
     onMounted(() => {
+      handleQueryCategory();
       handleQuery({
         page:1,
         size:pagination.value.pageSize
@@ -246,11 +284,16 @@ export default defineComponent({
       handleDelete,
       handleQuery,
 
+
       param,
       ebook,
       modalVisible,
       modalLoading,
       handleModalOk,
+      level1,
+      categoryIds,
+
+
     }
   }
 });
