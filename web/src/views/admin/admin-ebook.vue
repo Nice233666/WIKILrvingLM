@@ -149,6 +149,8 @@ export default defineComponent({
      **/
     const handleQuery = (params: any) => {
       loading.value = true;
+      //如果不清空现有数据,则编辑保存重新加载数据后,再点编辑，则列表显示还是原来的数据
+      ebooks.value=[];
       axios.get("/ebook/list", {
         params:{
           page:params.page,
@@ -247,7 +249,7 @@ export default defineComponent({
     };
 
     /**
-     * 查询名字
+     * 类显示名称
      */
     const getCategoryName=(cid : number)=>{
       let result="";
