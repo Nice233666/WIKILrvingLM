@@ -241,7 +241,14 @@ export default defineComponent({
           console.log("原始数组:",categorys);
           level1.value=[];
           level1.value=Tool.array2Tree(categorys,0);
-          console.log("树形数组:",level1.value)
+          console.log("树形数组:",level1.value);
+
+
+          //加载完分类后在加载电子书，否贼如果分类加载的慢，则电子书会报错
+          handleQuery({
+            page:1,
+            size:pagination.value.pageSize
+          });
         }else{
           message.error(data.message);
         }
@@ -281,10 +288,7 @@ export default defineComponent({
 
     onMounted(() => {
       handleQueryCategory();
-      handleQuery({
-        page:1,
-        size:pagination.value.pageSize
-      });
+
 
     });
 
