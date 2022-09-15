@@ -93,20 +93,6 @@ export default defineComponent({
       { type: 'MessageOutlined', text: '2' },
     ];
 
-    const isShowWelcome=ref(true);
-
-    /**
-     * 通过key来改变欢迎列表显示与隐藏
-     */
-    const handleClick = (value:any)=>{
-      // console.log("menu click  ",value);
-      // if(value.key==="welcome"){
-      //   isShowWelcome.value=true;
-      // }else{
-      //   isShowWelcome.value=false;
-      // }
-      isShowWelcome.value = value.key === "welcome";
-    };
 
     const level1=ref();
     let categorys: any;
@@ -128,18 +114,40 @@ export default defineComponent({
         }
       });
     };
+    const isShowWelcome=ref(true);
+    let category2Id=0;
 
-    onMounted(()=>{//页面加载完后的才执行的生命周期函数
-      handleQueryCategory();
+    /**
+     * 通过key来改变欢迎列表显示与隐藏
+     */
+    const handleClick = (value:any)=>{
+      // console.log("menu click  ",value);
+      if(value.key==="welcome"){
+        isShowWelcome.value=true;
+      }else{
+        category2Id=value.key;
+        queryAllList();
+        isShowWelcome.value=false;
+      }
+      // isShowWelcome.value = value.key === "welcome";
+    };
+
+    const queryAllList = ()=>{
       axios.get( "/ebook/list",{
         params:{
           page:1,
           size:500,
+          category2Id:category2Id,
         }
       }).then((response)=>{ //默认会有个参数 这个参数名是自个起的
         const data=response.data;//后端的commonResp的数据
         ebooks.value=data.content.list;
       });
+    };
+
+    onMounted(()=>{//页面加载完后的才执行的生命周期函数
+      handleQueryCategory();
+
     });
 
     return{
