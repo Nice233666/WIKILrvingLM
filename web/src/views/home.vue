@@ -7,10 +7,8 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link :to="'/'">
-            <MailOutlined />
-            <span>欢迎</span>
-          </router-link>
+          <MailOutlined />
+          <span>欢迎</span>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template v-slot:title>
@@ -28,7 +26,10 @@
     </a-layout-sider>
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }">
-      <a-list item-layout="vertical" size="large" :grid="{gutter : 20,column : 3}"  :data-source="ebooks">
+      <div class="welcome" v-show="isShowWelcome">
+        <p>欢迎欢迎热烈欢迎</p>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :grid="{gutter : 20,column : 3}"  :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.title">
             <template #actions>
@@ -92,11 +93,19 @@ export default defineComponent({
       { type: 'MessageOutlined', text: '2' },
     ];
 
+    const isShowWelcome=ref(true);
+
     /**
-     * 测试输出日志
+     * 通过key来改变欢迎列表显示与隐藏
      */
-    const handleClick = ()=>{
-      console.log("menu click");
+    const handleClick = (value:any)=>{
+      // console.log("menu click  ",value);
+      // if(value.key==="welcome"){
+      //   isShowWelcome.value=true;
+      // }else{
+      //   isShowWelcome.value=false;
+      // }
+      isShowWelcome.value = value.key === "welcome";
     };
 
     const level1=ref();
@@ -141,7 +150,8 @@ export default defineComponent({
       actions,
       level1,
       handleClick,
-    }
+      isShowWelcome,
+    };
   },
 
   components: {
