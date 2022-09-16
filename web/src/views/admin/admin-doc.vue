@@ -37,13 +37,18 @@
                 title="删了就真的没有啦,您是不是点歪了"
                 ok-text="真删不跟你闹"
                 cancel-text="哎哟点错了"
-                @confirm="handleDelete(record.id)"
+                @confirm="showModal"
             >
-              <a-button type="primary">
+              <a-button type="primary"  >
                 删除
               </a-button>
+                <a-modal  v-model:visible="visible"  title="警告" @ok="handleDelete(record.id)" ok-text="我测我真的删" cancelText="我的点错了">
+
+                  <p>删除后将无法找回</p>
+                </a-modal>
             </a-popconfirm>
           </a-space>
+
         </template>
       </a-table>
     </a-layout-content>
@@ -82,12 +87,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref} from 'vue';//写上onMounted VUE3.0 setup集成了 导入ref 做响应式数据
+import {defineComponent, onMounted, ref , createVNode} from 'vue';//写上onMounted VUE3.0 setup集成了 导入ref 做响应式数据
 import axios from 'axios';
-import {message} from 'ant-design-vue';
+import {message , Modal} from 'ant-design-vue';
 import {Tool} from "@/utils/tool";
 import {useRoute} from "vue-router";
-
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 
 export default defineComponent({
@@ -275,6 +280,20 @@ export default defineComponent({
     /**
      * 删除
      */
+    const visible=ref(false);
+    const showModal = (()=>{
+      visible.value=true;
+      // Modal.confirm({
+      //   title: '警告',
+      //   icon: createVNode(ExclamationCircleOutlined),
+      //   content: '删除后将无法找回',
+      //   okText: '我真真的删除',
+      //   cancelText: '哎哟点错了',
+      //   // v-model:visible="visible",
+      //   onOk: {handleDelete()},
+      // })
+
+    })
     const handleDelete = ( id:number ) =>{
       getDelID(level1.value,id);
       axios.delete("/doc/delete/"+delIds.join(",")).then((response)=>{
@@ -282,6 +301,9 @@ export default defineComponent({
         if(data.success){
           //重新加载列表
           handleQuery();
+          //清空数组 防止数组因为删除一直增加
+          delIds.splice(0);
+          visible.value=false;
         }
       })
     };
@@ -310,6 +332,10 @@ export default defineComponent({
       handleModalOk,
 
       treeSelectData,
+      visible,
+      showModal,
+
+
     }
   }
 });
