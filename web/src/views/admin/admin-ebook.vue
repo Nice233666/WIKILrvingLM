@@ -81,6 +81,7 @@
             v-model:value="categoryIds"
             :field-names="{label: 'name', value: 'id', children: 'children'}"
             :options="level1"
+            placeholder="到底选不选"
         />
       </a-form-item>
       <a-form-item label="阅读数">
@@ -132,6 +133,7 @@ export default defineComponent({
       },
       {
         title: '分类',
+
         slots: {customRender: 'category'},
       },
       {
@@ -198,6 +200,9 @@ export default defineComponent({
       modalLoading.value = true;
       ebook.value.category1Id=categoryIds.value[0];
       ebook.value.category2Id=categoryIds.value[1];
+
+
+
       axios.post("/ebook/save",ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data;  //commonResp
@@ -220,7 +225,7 @@ export default defineComponent({
     const edit = ( record:any ) =>{
       modalVisible .value = true;
       ebook.value = Tool.copy(record);  //通过JSON对象转换来生成新的对象，从而不会直接更改到原来所显示的对象
-      categoryIds.value=[ebook.value.category1id,ebook.value.category2id]
+      categoryIds.value=[ebook.value.category1Id,ebook.value.category2Id]
     };
     /**
      * 添加

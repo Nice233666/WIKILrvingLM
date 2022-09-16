@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 //@Controller  返回页面 @RestController 是返回字符串的
-@RestController  //@ResponseBody用来返回字符串或JSON对象 大多是JSON对象
+@RestController//@ResponseBody用来返回字符串或JSON对象 大多是JSON对象
 public class TestControl {
 
     @Value("${this.hello:test33}")

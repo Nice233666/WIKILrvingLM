@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 //@Controller  返回页面 @RestController 是返回字符串的
@@ -53,13 +54,18 @@ public class DocControl {
 
     /**
      * id删除电子书
-     * @param id
+     * @param idsStr
      * @return
      */
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable long id){
+    @DeleteMapping("/delete/{idsStr}")
+    public CommonResp delete(@PathVariable String idsStr){
         CommonResp resp = new CommonResp();
-        docService.delete(id);
+        if(!" ".equals(idsStr)){
+            List<String> list = Arrays.asList(idsStr.split(","));
+            docService.delete(list);
+        }
         return resp;
     }
+
+
 }

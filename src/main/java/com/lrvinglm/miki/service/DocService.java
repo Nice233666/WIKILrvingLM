@@ -98,5 +98,13 @@ public class DocService {
 
     }
 
+    public void delete(List<String> idsStr){
+        DocExample docExample = new DocExample();
+        //当作where语句
+        DocExample.Criteria criteria = docExample.createCriteria();
+        criteria.andIdIn(idsStr);
+        docMapper.deleteByExample(docExample);
+
+    }
 
 }
