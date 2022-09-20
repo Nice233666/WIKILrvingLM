@@ -21,7 +21,7 @@
 
           <!--列,key id,数据doc,分页,等待框,分页执行方法-->
           <a-table
-              v-if="level1.length >0"
+              v-if="level1.length>0 "
               :columns="columns"
               :row-key="record=>record.id"
               :data-source="level1"
@@ -169,6 +169,7 @@ export default defineComponent({
      **/
     const handleQuery = () => {
       loading.value = true;
+
       axios.get("/doc/all", ).then((response) => {
         loading.value = false;
         const data = response.data;
@@ -184,6 +185,7 @@ export default defineComponent({
         }
       });
     };
+
 
     /**表单*/
     //因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
@@ -273,16 +275,31 @@ export default defineComponent({
           }
         }
       }
-    }
-
+    };
+    /**
+     * 内容查询
+     **/
+    const handleQueryContent = () => {
+      doc.value.content={};
+      axios.get("/doc/find-content/"+doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success){
+          editor.txt.html(data.content);
+        }else{
+          message.error(data.message);
+        }
+      });
+    };
 
     /**
      * 编辑
      */
     const edit = ( record:any ) =>{
+
       modalVisible .value = true;
       doc.value = Tool.copy(record);  //通过JSON对象转换来生成新的对象，从而不会直接更改到原来所显示的对象
 
+      handleQueryContent();
       //不能选择当前节点下的所有子孙节点,作为父节点，会使树断开
       treeSelectData.value=Tool.copy(level1.value);
       setDisable(treeSelectData.value,record.id);

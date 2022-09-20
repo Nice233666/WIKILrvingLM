@@ -119,5 +119,11 @@ public class DocService {
         docMapper.deleteByExample(docExample);
 
     }
-
+    public String findContent(Long id){
+        Content content = contentMapper.selectByPrimaryKey(id);
+        if(!"".equals(content.getContent())){
+            return content.getContent();
+        }
+        return "没有数据捏";
+    }
 }
