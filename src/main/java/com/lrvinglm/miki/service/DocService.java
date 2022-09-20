@@ -36,13 +36,14 @@ public class DocService {
     private SnowFlake snowFlake;
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
-    public List<DocQueryResp> all(){
+    public List<DocQueryResp> all(Long ebookId){
 
 
 
         //domain下的example mybaits自动生成了很多方法
         DocExample docExample = new DocExample();
         docExample.setOrderByClause("sort asc");
+        docExample.createCriteria().andEbookIdEqualTo(ebookId);
         List<Doc> docList = docMapper.selectByExample(docExample);//查询到所有的Doc实体
         List<DocQueryResp> respList = CopyUtil.copyList(docList, DocQueryResp.class);
 
