@@ -21,12 +21,14 @@
 
           <!--列,key id,数据doc,分页,等待框,分页执行方法-->
           <a-table
+              v-if="level1.length >0"
               :columns="columns"
               :row-key="record=>record.id"
               :data-source="level1"
               :loading="loading"
               :pagination="false"
               size="small"
+              :defaultExpandAllRows="true"
           >
             <template #name="{ text,record }">
               {{record.sort}} {{text}}
@@ -82,6 +84,7 @@
                   placeholder="请选择父文档"
                   tree-default-expand-all
                   :replaceFields="{title: 'name',key: 'id',value: 'id'}"
+
               >
               </a-tree-select>
             </a-form-item>
@@ -159,7 +162,7 @@ export default defineComponent({
      * }]}
      */
     const level1=ref();
-
+    level1.value=[];
 
     /**
      * 数据查询
@@ -174,6 +177,7 @@ export default defineComponent({
           console.log("原始数组:",docs.value);
           level1.value=[];
           level1.value=Tool.array2Tree(docs.value,0);
+
           console.log("树形数组:",level1.value)
         }else{
           message.error(data.message);
