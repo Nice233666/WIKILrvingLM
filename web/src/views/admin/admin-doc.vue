@@ -202,7 +202,7 @@ export default defineComponent({
       modalLoading.value = true;
       doc.value.content=editor.txt.html();
       axios.post("/doc/save",doc.value).then((response) => {
-        modalLoading.value = false;
+        message.success("保存成功");
         const data = response.data;  //commonResp
         if(data.success){
           modalVisible.value = false;
@@ -280,7 +280,7 @@ export default defineComponent({
      * 内容查询
      **/
     const handleQueryContent = () => {
-      doc.value.content={};
+
       axios.get("/doc/find-content/"+doc.value.id).then((response) => {
         const data = response.data;
         if (data.success){
@@ -295,7 +295,7 @@ export default defineComponent({
      * 编辑
      */
     const edit = ( record:any ) =>{
-
+      editor.txt.html("");
       modalVisible .value = true;
       doc.value = Tool.copy(record);  //通过JSON对象转换来生成新的对象，从而不会直接更改到原来所显示的对象
 
