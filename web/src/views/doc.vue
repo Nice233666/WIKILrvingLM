@@ -5,10 +5,10 @@
         <a-row>
           <a-col :span="6">
             <a-tree
-                v-if="levele1.length >0"
+                v-if="level1.length >0"
               :tree-data="level1"
               @select="onSelect"
-              :replaceFields="{titile: 'name',key: 'id',value: 'id'}"
+              :replaceFields="{title: 'name',key: 'id',value: 'id'}"
               :defaultExpandAll="true"
             >
 
