@@ -122,9 +122,9 @@ public class DocService {
     }
     public String findContent(Long id){
         Content content = contentMapper.selectByPrimaryKey(id);
-        if(!"".equals(content.getContent())){
-            return content.getContent();
+        if(ObjectUtils.isEmpty(content.getContent())){
+            return "1";
         }
-        return "没有数据捏";
+        return content.getContent();
     }
 }

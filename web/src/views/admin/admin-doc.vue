@@ -71,6 +71,7 @@
               </a-form-item>
             </a-form>
           </p>
+
           <a-form :model="doc" layout="vertical">
             <a-form-item >
               <a-input v-model:value="doc.name" placeholder="名称"/>
@@ -91,13 +92,28 @@
             <a-form-item >
               <a-input v-model:value="doc.sort" placeholder="顺序"/>
             </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="handlePreviewContent()">
+                <EyeOutlined />内容预览
+              </a-button>
+            </a-form-item>
             <a-form-item >
               <div id="content" ></div>
             </a-form-item>
           </a-form>
         </a-col>
       </a-row>
-
+      <a-drawer
+          width="900"
+          class="custom-class"
+          :closable="false"
+          title="修改为可变参数咧"
+          placement="right"
+          :visible="drawerVisible"
+          @close="onDrawerClose"
+      >
+        <div class="wangeditor" :innerHTML="previewHtml"></div>
+      </a-drawer>
     </a-layout-content>
 
   </a-layout>
@@ -222,7 +238,19 @@ export default defineComponent({
         }
       });
     };
-
+    /**
+     * 富文本预览
+     */
+    const drawerVisible=ref(false);
+    const previewHtml=ref();
+    const handlePreviewContent=()=>{
+      const html=editor.txt.html();
+      previewHtml.value=html;
+      drawerVisible.value=true;
+    };
+    const onDrawerClose=()=>{
+      drawerVisible.value=false;
+    };
     /**
      * 将某节点及其子孙节点全部置为disabled
      */
@@ -298,6 +326,8 @@ export default defineComponent({
         }
       });
     };
+
+
 
     /**
      * 编辑
@@ -394,7 +424,10 @@ export default defineComponent({
       visible,
       showModal,
 
-
+      drawerVisible,
+      previewHtml,
+      handlePreviewContent,
+      onDrawerClose,
     }
   }
 });

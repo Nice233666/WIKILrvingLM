@@ -10,13 +10,13 @@
               @select="onSelect"
               :replaceFields="{title: 'name',key: 'id',value: 'id'}"
               :defaultExpandAll="true"
+              :defaultSelectedKeys="defaultSelectedKeys"
             >
 
             </a-tree>
           </a-col>
           <a-col :span="18">
-
-
+            <div class="wangeditor" :innerHTML="html"></div>
           </a-col>
         </a-row>
       </div>
@@ -39,7 +39,9 @@ export default defineComponent({
     const route=useRoute();
 
     const docs = ref();//响应式数据 获取的书籍实时反馈到页面上
-
+    const html=ref();
+    const defaultSelectedKeys=ref();
+    defaultSelectedKeys.value=[];
     /**
      * 一级文档树，children属性就是二级文档
      * [{
@@ -55,6 +57,30 @@ export default defineComponent({
     level1.value=[];
 
     /**
+     * 内容查询
+     */
+    const handleQueryContent=(id:number)=>{
+      axios.get("/doc/find-content/"+id).then((response)=>{
+        const data=response.data;
+        if(data.success){
+          html.value=data.content;
+
+        }else{
+          message.error(data.message);
+        }
+      });
+    };
+
+    //selectKeys当前选中的key 因为树形组件支持多选，所以这个key拿到的是数组
+    const onSelect=(selectKeys:any , info:any)=>{
+      console.log("selected:",selectKeys,info);
+      if(Tool.isNotEmpty(selectKeys)){
+
+        handleQueryContent(selectKeys[0]);
+      }
+    };
+
+    /**
      * 数据查询
      **/
     const handleQuery = () => {
@@ -62,18 +88,19 @@ export default defineComponent({
         const data = response.data;
         if (data.success){
           docs.value = data.content;
-          console.log("原始数组:",docs.value);
+
           level1.value=[];
           level1.value=Tool.array2Tree(docs.value,0);
 
-          console.log("树形数组:",level1.value)
+          if(Tool.isNotEmpty(level1)){
+            defaultSelectedKeys.value=[level1.value];
+            handleQueryContent(level1.value[0].id);
+          }
         }else{
           message.error(data.message);
         }
       });
     };
-
-
 
     onMounted(() => {
       handleQuery();
@@ -81,8 +108,87 @@ export default defineComponent({
 
     return {
       level1,
+      html,
+      onSelect,
 
+      defaultSelectedKeys,
     }
   }
 });
 </script>
+<style type="text/css">
+/* table 样式 */
+.wangeditor table {
+  border-top: 1px solid #ccc;
+  border-left: 1px solid #ccc;
+}
+
+.wangeditor table td,
+.wangeditor table th {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  padding: 3px 5px;
+}
+
+.wangeditor table th {
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+
+/* blockquote 样式 */
+.wangeditor blockquote {
+  display: block;
+  border-left: 8px solid #d0e5f2;
+  padding: 5px 10px;
+  margin: 10px 0;
+  line-height: 1.4;
+  font-size: 100%;
+  background-color: #f1f1f1;
+}
+
+/* code 样式 */
+.wangeditor code {
+  display: inline-block;
+  *display: inline;
+  *zoom: 1;
+  background-color: #f1f1f1;
+  border-radius: 3px;
+  padding: 3px 5px;
+  margin: 0 3px;
+}
+
+.wangeditor pre code {
+  display: block;
+}
+
+/* ul ol 样式 */
+.wangeditor ul, ol {
+  margin: 10px 0 10px 20px;
+}
+
+/* 和antdv p冲突，覆盖掉 */
+.wangeditor blockquote p {
+  font-family: "YouYuan";
+  margin: 20px 10px !important;
+  font-size: 16px !important;
+  font-weight: 600;
+}
+
+/* 点赞 */
+.vote-div {
+  padding: 15px;
+  text-align: center;
+}
+
+/* 图片自适应 */
+.wangeditor img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 视频自适应 */
+.wangeditor iframe {
+  width: 100%;
+  height: 400px;
+}
+</style>
