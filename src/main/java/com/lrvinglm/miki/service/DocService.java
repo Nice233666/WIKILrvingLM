@@ -123,7 +123,7 @@ public class DocService {
     public String findContent(Long id){
         Content content = contentMapper.selectByPrimaryKey(id);
         if(ObjectUtils.isEmpty(content.getContent())){
-            return "1";
+            return " ";
         }
         return content.getContent();
     }
