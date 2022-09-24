@@ -84,8 +84,9 @@ public class UserService {
             }
 
         }else{
-            //更新
-            userMapper.updateByPrimaryKey(user);
+            //更新 前端的校验会给绕过，这个操作就是把LoginName清空,而带Selective这个的方法就是在数据有值的时候才更新，不然不更新
+            user.setLoginName(null);
+            userMapper.updateByPrimaryKeySelective(user);
         }
     }
 
